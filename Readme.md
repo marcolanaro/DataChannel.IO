@@ -3,7 +3,7 @@
 Datachannel.io is inspired by the amazing socket.io framework and implements a real-time communication using the WebRTC technology.
 Peers are directly connected and datas are exchanged between clients without passing throug the server.
 
-Socket.io is only used to serve signals between clients. You can choose the namespace where socket.io server his signals.
+Socket.io is only used to serve signals between clients. You can choose the namespace where socket.io serve his signals.
 
 ## Installing
 	npm install datachannel.io
