@@ -1,0 +1,24 @@
+{
+  "name": "datachannel.io",
+  "version": "0.0.1",
+  "description": "node.js realtime signaling server",
+  "keywords": [
+    "realtime",
+    "framework",
+    "websocket",
+    "webRTC",
+    "events",
+    "socket",
+    "io"
+  ],
+  "dependencies": {
+    "socket.io": "0.9.12",
+    "send": "~0.1.0"
+  },
+  "contributors": [
+    {
+      "name": "Marco Lanaro",
+      "email": "marcolanaro@gmail.com"
+    }
+  ]
+}
