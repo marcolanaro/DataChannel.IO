@@ -1,5 +1,3 @@
-# DataChannel.IO
-
 Datachannel.io is inspired by the amazing socket.io framework and implements a real-time communication using the WebRTC technology.
 Peers are directly connected and datas are exchanged between clients without passing throug the server.
 
