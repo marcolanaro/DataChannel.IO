@@ -1,11 +1,20 @@
+performance.now = performance.now || performance.webkitNow;
+var RTCPeerConnection = null;
+if (navigator.mozGetUserMedia) {
+	RTCPeerConnection = mozRTCPeerConnection;
+} else if (navigator.webkitGetUserMedia) {
+	RTCPeerConnection = webkitRTCPeerConnection;
+} 
+
+
 var DataChannel = (function(window){
 
-	var User_Id;
-	var channels = [];
-	var socket;
-	var options;
-	var onCallbacks = [];
-	var rooms = [];
+	var User_Id
+	  , socket
+	  , options
+	  , channels = []
+	  , onCallbacks = []
+	  , rooms = [];
 
 
 	var Extend = function(destination, source){
