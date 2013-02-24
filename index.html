@@ -43,9 +43,9 @@ Peers are directly connected and datas are exchanged between clients without pas
 <pre><code>npm install datachannel.io
 </code></pre>
 
-<h2>Using with Node HTTP server</h2>
+<h2>On the Server</h2>
 
-<h4>On the Server</h4>
+<h4>Using with Node HTTP server</h4>
 
 <pre><code>var app = require('http').createServer(handler)
   , io = require('datachannel.io').listen(app, 'dataChannel');
@@ -65,60 +65,67 @@ function handler (req, res) {
 }
 </code></pre>
 
-<h4>On the Client</h4>
-
-<pre><code>var datachannel = new DataChannel({
-    socketServer: 'http://&lt;yourIP&gt;',
-    rtcServers: null,
-    nameSpace: 'dataChannel'
-});
-</code></pre>
-
-<h2>Using with the Express 3 web framework</h2>
-
-<h4>On the Server</h4>
+<h4>Using with the Express 3 web framework</h4>
 
 <pre><code>var app = require('express')()
   , server = require('http').createServer(app)
   , dc = require('datachannel.io').listen(server, 'dataChannel');
 
-app.listen(80);
+app.use(express.static(__dirname + '/client'));
 
-function handler (req, res) {
-  fs.readFile(__dirname + '/index.html',
-  function (err, data) {
-    if (err) {
-      res.writeHead(500);
-      return res.end('Error loading index.html');
-    }
-    res.writeHead(200);
-    res.end(data);
-  });
-}
+server.listen(80);
 </code></pre>
 
-<h4>On the Client</h4>
+<h2>On the Client</h2>
 
-<pre><code>var datachannel = new DataChannel({
-    socketServer: 'http://&lt;yourIP&gt;',
-    rtcServers: null,
-    nameSpace: 'dataChannel'
-});
+<h4>index.html</h4>
+
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;&lt;/head&gt;
+    &lt;body&gt;
+        &lt;script src="/socket.io/socket.io.js"&gt;&lt;/script&gt;
+        &lt;script src="/datachannel.io/datachannel.io.js"&gt;&lt;/script&gt;
+        &lt;script&gt;
+            var datachannel = new DataChannel({
+                socketServer: 'http://&lt;yourIP&gt;'
+            });
+        &lt;/script&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
 </code></pre>
 
-<h2>Join a Room (from the client)</h2>
+<h4>Initialization</h4>
+
+<p>The parameters passed to the <code>new DataChannel(object)</code> initialization is composed by:</p>
+
+<ul>
+<li>
+<code>socketServer</code> [mandatory]: the address of the socket server used to serve signals between clients</li>
+<li>
+<code>nameSpace</code> [optional, default as <code>'dataChannel'</code>]: namespace of the socket.io server</li>
+<li>
+<code>rtcServers</code> [optional, default as <code>null</code>]: RTC Servers</li>
+</ul><h4>Join a Room</h4>
 
 <pre><code>datachannel.join("room");
 </code></pre>
 
-<h2>Leave a Room (from the client)</h2>
+<h4>Leave a Room</h4>
 
 <pre><code>datachannel.leave("room");
 </code></pre>
 
-<h2>Send a Message</h2>
+<h4>Send a Message</h4>
 
 <pre><code>datachannel.in("room").emit("chat", {text: 'Hi!'});
+</code></pre>
+
+<h4>Get a Message</h4>
+
+<pre><code>datachannel.in("room").on("chat", function(data) {
+    console.log(data);
+});
 </code></pre>
 
 <h3>ToDo</h3>
