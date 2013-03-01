@@ -2,6 +2,7 @@ Datachannel.io is inspired by the amazing socket.io framework and implements a r
 Peers are directly connected and datas are exchanged between clients without passing throug the server.
 
 Socket.io is only used to serve signals between clients. You can choose the namespace where socket.io serve his signals.
+In case peer-to-peer communication fails or your browser does not support WebRTC, socket.io serve also the data message.
 
 ## Installing
 	npm install datachannel.io
@@ -62,15 +63,14 @@ The parameters passed to the `new DataChannel(object)` initialization is compose
 	datachannel.in("room").on("chat", function(data) {
 		console.log(data);
 	});
-### ToDo
-
-- Test on Firefox
-- Implement e relay layer: in case peer-to-peer communication fails, socket.io serve the data message
 
 ### Examples
 Some examples at:
 
 [https://github.com/marcolanaro/DataChannel.IO-Examples](https://github.com/marcolanaro/DataChannel.IO-Examples)
 
+### ToDo
+
+- Support Firefox: at the moment the API is incomplete, it is necessary to create a fake stream to add a datachannel
 
 Tested on Chrome Canary
