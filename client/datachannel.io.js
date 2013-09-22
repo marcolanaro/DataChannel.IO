@@ -1,11 +1,6 @@
-performance.now = performance.now || performance.webkitNow;
-var RTCPeerConnection = null;
-if (navigator.mozGetUserMedia) {
-	RTCPeerConnection = mozRTCPeerConnection;
-} else if (navigator.webkitGetUserMedia) {
-	RTCPeerConnection = webkitRTCPeerConnection;
-} 
-
+var RTCPeerConnection = window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+var RTCIceCandidate = window.mozRTCIceCandidate || window.RTCIceCandidate;
+var RTCSessionDescription = window.mozRTCSessionDescription || window.RTCSessionDescription;
 
 var DataChannel = (function(window){
 
@@ -15,7 +10,6 @@ var DataChannel = (function(window){
 	  , channels = []
 	  , onCallbacks = []
 	  , rooms = [];
-
 
 	var Extend = function(destination, source){
 		for(var property in source)
@@ -49,7 +43,7 @@ var DataChannel = (function(window){
 
 	function _newChannel(id) {
 		try {
-			var pc = new RTCPeerConnection(options.rtcServers, {optional: [{RtpDataChannels: true}]});
+			var pc = new RTCPeerConnection(options.rtcServers, {optional: [{DtlsSrtpKeyAgreement: true}, {RtpDataChannels: true}]});
 			pc.onicecandidate = function(event) {
 				if (event.candidate) {
 					socket.emit('addIceCandidate', { candidate: event.candidate, user_id: id });
@@ -71,13 +65,13 @@ var DataChannel = (function(window){
 			case 'answer': {
 				channels[id].pc.createAnswer(function(description) {
 					_setDescription(description, id, type);
-				});
+				}, function(err) { alert("Error " + err); });
 			}
 			break;
 			case 'offer': {
 				channels[id].pc.createOffer(function(description) {
 					_setDescription(description, id, type);
-				});
+				}, function(err) { alert("Error " + err); });
 			}
 			break;
 		}
@@ -103,7 +97,7 @@ var DataChannel = (function(window){
 	function createConnection(id) {
 		try {
 			channels[id] = _newChannel(id);
-			channels[id].dc = channels[id].pc.createDataChannel("sendDataChannel", {reliable: false});
+			channels[id].dc = channels[id].pc.createDataChannel("sendDataChannel");
 			Extend(channels[id].dc, _channel);
 			_create('offer', id);
 		} catch (e) {_noWebRTC(id)}
@@ -170,7 +164,12 @@ var DataChannel = (function(window){
 	var C = function(o){
 		options = {
 			socketServer: o.socketServer || null,
-			rtcServers: o.rtcServers || null,
+			rtcServers: o.rtcServers || {
+				iceServers: [
+					{url: "stun:23.21.150.121"},
+					{url: "stun:stun.l.google.com:19302"}
+				]
+			},
 			nameSpace: o.nameSpace || 'dataChannel'
 		};
 		socketInit(options.socketServer, options.nameSpace);
