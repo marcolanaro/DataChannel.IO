@@ -34,16 +34,20 @@
         <p>Datachannel.io is inspired by the amazing socket.io framework and implements a real-time communication using the WebRTC technology.
 Peers are directly connected and datas are exchanged between clients without passing throug the server.</p>
 
-<p>Socket.io is only used to serve signals between clients. You can choose the namespace where socket.io serve his signals.</p>
+<p>Socket.io is only used to serve signals between clients. You can choose the namespace where socket.io serve his signals.
+In case peer-to-peer communication fails or your browser does not support WebRTC, socket.io serve also the data message.</p>
 
-<h2>Installing</h2>
+<h2>
+<a name="installing" class="anchor" href="#installing"><span class="octicon octicon-link"></span></a>Installing</h2>
 
 <pre><code>npm install datachannel.io
 </code></pre>
 
-<h2>On the Server</h2>
+<h2>
+<a name="on-the-server" class="anchor" href="#on-the-server"><span class="octicon octicon-link"></span></a>On the Server</h2>
 
-<h4>Using with Node HTTP server</h4>
+<h4>
+<a name="using-with-node-http-server" class="anchor" href="#using-with-node-http-server"><span class="octicon octicon-link"></span></a>Using with Node HTTP server</h4>
 
 <pre><code>var app = require('http').createServer(handler)
   , io = require('datachannel.io').listen(app, 'dataChannel');
@@ -63,7 +67,8 @@ function handler (req, res) {
 }
 </code></pre>
 
-<h4>Using with the Express 3 web framework</h4>
+<h4>
+<a name="using-with-the-express-3-web-framework" class="anchor" href="#using-with-the-express-3-web-framework"><span class="octicon octicon-link"></span></a>Using with the Express 3 web framework</h4>
 
 <pre><code>var app = require('express')()
   , server = require('http').createServer(app)
@@ -74,9 +79,11 @@ app.use(express.static(__dirname + '/client'));
 server.listen(80);
 </code></pre>
 
-<h2>On the Client</h2>
+<h2>
+<a name="on-the-client" class="anchor" href="#on-the-client"><span class="octicon octicon-link"></span></a>On the Client</h2>
 
-<h4>index.html</h4>
+<h4>
+<a name="indexhtml" class="anchor" href="#indexhtml"><span class="octicon octicon-link"></span></a>index.html</h4>
 
 <pre><code>&lt;!DOCTYPE html&gt;
 &lt;html&gt;
@@ -93,7 +100,8 @@ server.listen(80);
 &lt;/html&gt;
 </code></pre>
 
-<h4>Initialization</h4>
+<h4>
+<a name="initialization" class="anchor" href="#initialization"><span class="octicon octicon-link"></span></a>Initialization</h4>
 
 <p>The parameters passed to the <code>new DataChannel(object)</code> initialization is composed by:</p>
 
@@ -104,40 +112,47 @@ server.listen(80);
 <code>nameSpace</code> [optional, default as <code>'dataChannel'</code>]: namespace of the socket.io server</li>
 <li>
 <code>rtcServers</code> [optional, default as <code>null</code>]: RTC Servers</li>
-</ul><h4>Join a Room</h4>
+</ul><h4>
+<a name="join-a-room" class="anchor" href="#join-a-room"><span class="octicon octicon-link"></span></a>Join a Room</h4>
 
 <pre><code>datachannel.join("room");
 </code></pre>
 
-<h4>Leave a Room</h4>
+<h4>
+<a name="leave-a-room" class="anchor" href="#leave-a-room"><span class="octicon octicon-link"></span></a>Leave a Room</h4>
 
 <pre><code>datachannel.leave("room");
 </code></pre>
 
-<h4>Send a Message</h4>
+<h4>
+<a name="send-a-message" class="anchor" href="#send-a-message"><span class="octicon octicon-link"></span></a>Send a Message</h4>
 
 <pre><code>datachannel.in("room").emit("chat", {text: 'Hi!'});
 </code></pre>
 
-<h4>Get a Message</h4>
+<h4>
+<a name="get-a-message" class="anchor" href="#get-a-message"><span class="octicon octicon-link"></span></a>Get a Message</h4>
 
 <pre><code>datachannel.in("room").on("chat", function(data) {
     console.log(data);
 });
 </code></pre>
 
-<h3>ToDo</h3>
-
-<ul>
-<li>Test on Firefox</li>
-<li>Implement e relay layer: in case peer-to-peer communication fails, socket.io serve the data message</li>
-</ul><h3>Examples</h3>
+<h3>
+<a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples</h3>
 
 <p>Some examples at:</p>
 
 <p><a href="https://github.com/marcolanaro/DataChannel.IO-Examples">https://github.com/marcolanaro/DataChannel.IO-Examples</a></p>
 
-<p>Tested on Chrome Canary</p>
+<h3>
+<a name="todo" class="anchor" href="#todo"><span class="octicon octicon-link"></span></a>ToDo</h3>
+
+<ul>
+<li>Session Management</li>
+<li>Scaling with Redis Pub/Sub</li>
+<li>SSL</li>
+</ul><p>Tested on Chrome v25 and Firefox v20 or later.</p>
       </section>
     </div>
 
