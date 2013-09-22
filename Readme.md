@@ -71,6 +71,8 @@ Some examples at:
 
 ### ToDo
 
-- Support Firefox: at the moment the API is incomplete, it is necessary to create a fake stream to add a datachannel
+- Session Management
+- Scaling with Redis Pub/Sub
+- SSL
 
-Tested on Chrome Canary
+Tested on Chrome v25 and Firefox v20 or later.
