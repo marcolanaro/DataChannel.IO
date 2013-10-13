@@ -82,11 +82,6 @@ The parameters of the `new DataChannel(object)` are:
 		console.log(data);
 	});
 
-### Examples
-Some examples at:
-
-[https://github.com/marcolanaro/DataChannel.IO-Examples](https://github.com/marcolanaro/DataChannel.IO-Examples)
-
 ### ToDo
 
 - Scaling with Redis Pub/Sub
