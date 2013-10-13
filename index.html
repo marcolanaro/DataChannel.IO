@@ -49,34 +49,59 @@ In case peer-to-peer communication fails or your browser does not support WebRTC
 <h4>
 <a name="using-with-node-http-server" class="anchor" href="#using-with-node-http-server"><span class="octicon octicon-link"></span></a>Using with Node HTTP server</h4>
 
-<pre><code>var app = require('http').createServer(handler)
-  , io = require('datachannel.io').listen(app, 'dataChannel');
+<pre><code>var server = require('http').createServer();
+var dc = require('dataChannel.io').listen(server);
 
-app.listen(80);
-
-function handler (req, res) {
-  fs.readFile(__dirname + '/index.html',
-  function (err, data) {
-    if (err) {
-      res.writeHead(500);
-      return res.end('Error loading index.html');
-    }
-    res.writeHead(200);
-    res.end(data);
-  });
-}
+server.listen(8080);
 </code></pre>
 
 <h4>
-<a name="using-with-the-express-3-web-framework" class="anchor" href="#using-with-the-express-3-web-framework"><span class="octicon octicon-link"></span></a>Using with the Express 3 web framework</h4>
+<a name="without-serving-static-files" class="anchor" href="#without-serving-static-files"><span class="octicon octicon-link"></span></a>Without serving static files</h4>
 
-<pre><code>var app = require('express')()
-  , server = require('http').createServer(app)
-  , dc = require('datachannel.io').listen(server, 'dataChannel');
+<p>If you do not want to serve the static client file at <code>/datachannel.io/datachannel.io.js</code> you need to add the parameter <code>static: false</code>.</p>
 
-app.use(express.static(__dirname + '/client'));
+<pre><code>var server = require('http').createServer();
+var dc = require('dataChannel.io').listen(server, {
+    static: false
+});
 
-server.listen(80);
+server.listen(8080);
+</code></pre>
+
+<h4>
+<a name="session-support" class="anchor" href="#session-support"><span class="octicon octicon-link"></span></a>Session support</h4>
+
+<p>If you want to add session support you need to append the <code>session</code> object to the initialization with these parameters:</p>
+
+<ul>
+<li>
+<code>cookie</code> [mandatory]: object with <code>name</code> of the cookie and <code>secret</code> key</li>
+<li>
+<code>store</code> [mandatory]: the sessionStore object</li>
+<li>
+<code>auth</code> [optional, default as <code>return true</code>]: function that return the authorization to use the socket.io server based on the current <code>session</code>.</li>
+</ul><p>Redis session store example:</p>
+
+<pre><code>var server = require('http').createServer()
+  , connect = require('connect')
+  , RedisStore = require("connect-redis")(connect)
+  , redis = require("redis");
+
+var dc = require('dataChannel.io').listen(server, {
+    session: {
+        cookie: {name: "datachannel.io", secret: "thisismysecretkey"},
+        store: new RedisStore({
+            host: "localhost",
+            port: 6379,
+            client: redis.createClient()
+        }),
+        auth: function(session) {
+            return true;
+        }
+    }
+});
+
+server.listen(8080);
 </code></pre>
 
 <h2>
@@ -103,7 +128,7 @@ server.listen(80);
 <h4>
 <a name="initialization" class="anchor" href="#initialization"><span class="octicon octicon-link"></span></a>Initialization</h4>
 
-<p>The parameters passed to the <code>new DataChannel(object)</code> initialization is composed by:</p>
+<p>The parameters of the <code>new DataChannel(object)</code> are:</p>
 
 <ul>
 <li>
@@ -139,20 +164,12 @@ server.listen(80);
 </code></pre>
 
 <h3>
-<a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples</h3>
-
-<p>Some examples at:</p>
-
-<p><a href="https://github.com/marcolanaro/DataChannel.IO-Examples">https://github.com/marcolanaro/DataChannel.IO-Examples</a></p>
-
-<h3>
 <a name="todo" class="anchor" href="#todo"><span class="octicon octicon-link"></span></a>ToDo</h3>
 
 <ul>
-<li>Session Management</li>
 <li>Scaling with Redis Pub/Sub</li>
 <li>SSL</li>
-</ul><p>Tested on Chrome v25 and Firefox v20 or later.</p>
+</ul><p>Tested on Chrome v25 and Firefox v20.</p>
       </section>
     </div>
 
