@@ -8,30 +8,48 @@ In case peer-to-peer communication fails or your browser does not support WebRTC
 	npm install datachannel.io
 ## On the Server
 #### Using with Node HTTP server
-	var app = require('http').createServer(handler)
-	  , io = require('datachannel.io').listen(app, 'dataChannel');
+	var server = require('http').createServer();
+	var dc = require('dataChannel.io').listen(server);
 
-	app.listen(80);
-	
-	function handler (req, res) {
-	  fs.readFile(__dirname + '/index.html',
-	  function (err, data) {
-	    if (err) {
-	      res.writeHead(500);
-	      return res.end('Error loading index.html');
-	    }
-	    res.writeHead(200);
-	    res.end(data);
-	  });
-	}
-#### Using with the Express 3 web framework
-	var app = require('express')()
-	  , server = require('http').createServer(app)
-	  , dc = require('datachannel.io').listen(server, 'dataChannel');
+	server.listen(8080);
+#### Without serving static files
+If you do not want to serve the static client file at `/datachannel.io/datachannel.io.js` you need to add the parameter `static: false`.
 
-	app.use(express.static(__dirname + '/client'));
+	var server = require('http').createServer();
+	var dc = require('dataChannel.io').listen(server, {
+		static: false
+	});
 
-	server.listen(80);
+	server.listen(8080);
+#### Session support
+If you want to add session support you need to append the `session` object to the initialization with these parameters:
+* `cookie` [mandatory]: object with `name` of the cookie and `secret` key
+* `store` [mandatory]: the sessionStore object
+* `auth` [optional, default as `return true`]: function that return the authorization to use the socket.io server based on the current `session`.
+
+Redis session store example:
+
+
+	var server = require('http').createServer()
+	  , connect = require('connect')
+	  , RedisStore = require("connect-redis")(connect)
+	  , redis = require("redis");
+
+	var dc = require('dataChannel.io').listen(server, {
+		session: {
+			cookie: {name: "datachannel.io", secret: "thisismysecretkey"},
+			store: new RedisStore({
+				host: "localhost",
+				port: 6379,
+				client: redis.createClient()
+			}),
+			auth: function(session) {
+				return true;
+			}
+		}
+	});
+
+	server.listen(8080);
 ## On the Client
 #### index.html
 	<!DOCTYPE html>
@@ -48,7 +66,7 @@ In case peer-to-peer communication fails or your browser does not support WebRTC
 		</body>
 	</html>
 #### Initialization
-The parameters passed to the `new DataChannel(object)` initialization is composed by:
+The parameters of the `new DataChannel(object)` are:
 * `socketServer` [mandatory]: the address of the socket server used to serve signals between clients
 * `nameSpace` [optional, default as `'dataChannel'`]: namespace of the socket.io server
 * `rtcServers` [optional, default as `null`]: RTC Servers
@@ -71,8 +89,7 @@ Some examples at:
 
 ### ToDo
 
-- Session Management
 - Scaling with Redis Pub/Sub
 - SSL
 
-Tested on Chrome v25 and Firefox v20 or later.
+Tested on Chrome v25 and Firefox v20.

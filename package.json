@@ -1,6 +1,6 @@
 {
   "name": "datachannel.io",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "node.js realtime signaling server",
   "keywords": [
     "realtime",
@@ -13,6 +13,8 @@
   ],
   "dependencies": {
     "socket.io": "0.9.12",
+    "cookie": "0.1.0",
+    "connect": "2.9.0",
     "send": "~0.1.0"
   },
   "contributors": [
