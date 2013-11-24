@@ -1,4 +1,4 @@
-var RTCPeerConnection = window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+var RTCPeerConnection = window.mozRTCPeerConnection || window.webkitRTCPeerConnection || window.RTCPeerConnection;
 var RTCIceCandidate = window.mozRTCIceCandidate || window.RTCIceCandidate;
 var RTCSessionDescription = window.mozRTCSessionDescription || window.RTCSessionDescription;
 
@@ -97,7 +97,7 @@ var DataChannel = (function(window){
 	function createConnection(id) {
 		try {
 			channels[id] = _newChannel(id);
-			channels[id].dc = channels[id].pc.createDataChannel("sendDataChannel");
+			channels[id].dc = channels[id].pc.createDataChannel("sendDataChannel", { reliable : false });
 			Extend(channels[id].dc, _channel);
 			_create('offer', id);
 		} catch (e) {_noWebRTC(id)}
@@ -113,8 +113,8 @@ var DataChannel = (function(window){
 			receiveOffer(data);
 		});
 
-		socket.on('answer', function(data) {
-			try {
+		socket.on('answer', function(data) {console.log(JSON.stringify(data));
+			try {console.log(data);
 				channels[data.user_id].pc.setRemoteDescription(new RTCSessionDescription(data.description));
 			} catch (e) {_noWebRTC(data.user_id)}
 		});
@@ -126,7 +126,7 @@ var DataChannel = (function(window){
 		});
 
 		socket.on('rely', function(data) {
-			_onMessage(JSON.parse(data.message));
+			_onMessage(JSON.parse(data));
 		});
 
 		socket.on('userJoined', function(data) {
@@ -166,8 +166,19 @@ var DataChannel = (function(window){
 			socketServer: o.socketServer || null,
 			rtcServers: o.rtcServers || {
 				iceServers: [
-					{url: "stun:23.21.150.121"},
-					{url: "stun:stun.l.google.com:19302"}
+					{
+						"url": "stun:stun.l.google.com:19302"
+					},
+					{
+						"url": "turn:192.158.29.39:3478?transport=udp",
+						"credential": "JZEOEt2V3Qb0y27GRntt2u2PAYA=",
+						"username": "28224511:1379330808"
+					},
+					{
+						"url": "turn:192.158.29.39:3478?transport=tcp",
+						"credential": "JZEOEt2V3Qb0y27GRntt2u2PAYA=",
+						"username": "28224511:1379330808"
+					}
 				]
 			},
 			nameSpace: o.nameSpace || 'dataChannel'
@@ -194,14 +205,17 @@ var DataChannel = (function(window){
 					if (!channels) {
 						socket.emit('rely', { message: message , room: room});
 					} else {
+						var ids = [];
 						for (var i = 0, l = rooms[room].length; i < l; i += 1) {
 							var id = rooms[room][i];
 							try {
 								channels[id].dc.send(message);
 							} catch (e) {
-								socket.emit('rely', { message: message, to: id });
+								ids.push(id);
 							}
 						}
+						if (ids.length > 0)
+							socket.emit('rely', { message: message, to: ids });
 					}
 				},
 				on: function(event, callback) {

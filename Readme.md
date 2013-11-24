@@ -1,18 +1,38 @@
 Datachannel.io is inspired by the amazing socket.io framework and implements a real-time communication using the WebRTC technology.
 Peers are directly connected and datas are exchanged between clients without passing throug the server.
 
-Socket.io is only used to serve signals between clients. You can choose the namespace where socket.io serve his signals.
-In case peer-to-peer communication fails or your browser does not support WebRTC, socket.io serve also the data message.
+Socket.io has two purposes:
+* Serve signals between clients needed to coordinate the communication.
+* In case peer-to-peer communication fails or your browser does not support WebRTC, socket.io serve also the data message.
 
 ## Installing
 	npm install datachannel.io
 ## On the Server
-#### Using with Node HTTP server
 	var server = require('http').createServer();
-	var dc = require('dataChannel.io').listen(server);
+	var dc = require('dataChannel.io').listen(server, options);
 
 	server.listen(8080);
-#### Without serving static files
+#### Complete Options
+If you want to implement sessions management or horizontal scaling you need a redis server.
+
+	var options = {
+		nameSpace: [STRING],
+		redis: {port: [INTEGER], host: [STRING], options: {}},
+		session: {
+			cookie: [STRING],
+			store: new RedisStore({
+				host: [STRING],
+				port: [INTEGER],
+				client: redis.createClient()
+			}),
+			auth: function(session) {
+				return true;
+			}
+		},
+		static: [BOOLEAN]
+	}
+
+#### Static File
 If you do not want to serve the static client file at `/datachannel.io/datachannel.io.js` you need to add the parameter `static: false`.
 
 	var server = require('http').createServer();
@@ -21,7 +41,8 @@ If you do not want to serve the static client file at `/datachannel.io/datachann
 	});
 
 	server.listen(8080);
-#### Session support
+
+#### Session Support
 If you want to add session support you need to append the `session` object to the initialization with these parameters:
 * `cookie` [mandatory]: object with `name` of the cookie and `secret` key
 * `store` [mandatory]: the sessionStore object
@@ -84,7 +105,6 @@ The parameters of the `new DataChannel(object)` are:
 
 ### ToDo
 
-- Scaling with Redis Pub/Sub
 - SSL
 
 Tested on Chrome v25 and Firefox v20.
