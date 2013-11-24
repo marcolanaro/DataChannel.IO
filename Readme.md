@@ -109,5 +109,7 @@ The parameters of the `new DataChannel(object)` are:
 
 Tested on Chrome v25 and Firefox v20.
 
+Some examples at [https://github.com/marcolanaro/DataChannel.IO-Examples](https://github.com/marcolanaro/DataChannel.IO-Examples).
 
-More information at [www.datachannel.io](www.datachannel.io).
+
+More information at [http://www.datachannel.io](http://www.datachannel.io).
