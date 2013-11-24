@@ -34,10 +34,12 @@
         <p>Datachannel.io is inspired by the amazing socket.io framework and implements a real-time communication using the WebRTC technology.
 Peers are directly connected and datas are exchanged between clients without passing throug the server.</p>
 
-<p>Socket.io is only used to serve signals between clients. You can choose the namespace where socket.io serve his signals.
-In case peer-to-peer communication fails or your browser does not support WebRTC, socket.io serve also the data message.</p>
+<p>Socket.io has two purposes:</p>
 
-<h2>
+<ul>
+<li>Serve signals between clients needed to coordinate the communication.</li>
+<li>In case peer-to-peer communication fails or your browser does not support WebRTC, socket.io serve also the data message.</li>
+</ul><h2>
 <a name="installing" class="anchor" href="#installing"><span class="octicon octicon-link"></span></a>Installing</h2>
 
 <pre><code>npm install datachannel.io
@@ -46,17 +48,37 @@ In case peer-to-peer communication fails or your browser does not support WebRTC
 <h2>
 <a name="on-the-server" class="anchor" href="#on-the-server"><span class="octicon octicon-link"></span></a>On the Server</h2>
 
-<h4>
-<a name="using-with-node-http-server" class="anchor" href="#using-with-node-http-server"><span class="octicon octicon-link"></span></a>Using with Node HTTP server</h4>
-
 <pre><code>var server = require('http').createServer();
-var dc = require('dataChannel.io').listen(server);
+var dc = require('dataChannel.io').listen(server, options);
 
 server.listen(8080);
 </code></pre>
 
 <h4>
-<a name="without-serving-static-files" class="anchor" href="#without-serving-static-files"><span class="octicon octicon-link"></span></a>Without serving static files</h4>
+<a name="complete-options" class="anchor" href="#complete-options"><span class="octicon octicon-link"></span></a>Complete Options</h4>
+
+<p>If you want to implement sessions management or horizontal scaling you need a redis server.</p>
+
+<pre><code>var options = {
+    nameSpace: [STRING],
+    redis: {port: [INTEGER], host: [STRING], options: {}},
+    session: {
+        cookie: [STRING],
+        store: new RedisStore({
+            host: [STRING],
+            port: [INTEGER],
+            client: redis.createClient()
+        }),
+        auth: function(session) {
+            return true;
+        }
+    },
+    static: [BOOLEAN]
+}
+</code></pre>
+
+<h4>
+<a name="static-file" class="anchor" href="#static-file"><span class="octicon octicon-link"></span></a>Static File</h4>
 
 <p>If you do not want to serve the static client file at <code>/datachannel.io/datachannel.io.js</code> you need to add the parameter <code>static: false</code>.</p>
 
@@ -69,7 +91,7 @@ server.listen(8080);
 </code></pre>
 
 <h4>
-<a name="session-support" class="anchor" href="#session-support"><span class="octicon octicon-link"></span></a>Session support</h4>
+<a name="session-support" class="anchor" href="#session-support"><span class="octicon octicon-link"></span></a>Session Support</h4>
 
 <p>If you want to add session support you need to append the <code>session</code> object to the initialization with these parameters:</p>
 
@@ -167,9 +189,12 @@ server.listen(8080);
 <a name="todo" class="anchor" href="#todo"><span class="octicon octicon-link"></span></a>ToDo</h3>
 
 <ul>
-<li>Scaling with Redis Pub/Sub</li>
 <li>SSL</li>
 </ul><p>Tested on Chrome v25 and Firefox v20.</p>
+
+<p>Some examples at <a href="https://github.com/marcolanaro/DataChannel.IO-Examples">https://github.com/marcolanaro/DataChannel.IO-Examples</a>.</p>
+
+<p>More information at <a href="http://www.datachannel.io">http://www.datachannel.io</a>.</p>
       </section>
     </div>
 
