@@ -108,3 +108,6 @@ The parameters of the `new DataChannel(object)` are:
 - SSL
 
 Tested on Chrome v25 and Firefox v20.
+
+
+More information at [www.datachannel.io](www.datachannel.io).
