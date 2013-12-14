@@ -20,11 +20,6 @@ If you want to implement sessions management or horizontal scaling you need a re
 		redis: {port: [INTEGER], host: [STRING], options: {}},
 		session: {
 			cookie: [STRING],
-			store: new RedisStore({
-				host: [STRING],
-				port: [INTEGER],
-				client: redis.createClient()
-			}),
 			auth: function(session) {
 				return true;
 			}
@@ -43,27 +38,17 @@ If you do not want to serve the static client file at `/datachannel.io/datachann
 	server.listen(8080);
 
 #### Session Support
-If you want to add session support you need to append the `session` object to the initialization with these parameters:
+If you want to add session support you need a Redis server configured. Append the `session` object to the initialization with these parameters:
 * `cookie` [mandatory]: object with `name` of the cookie and `secret` key
-* `store` [mandatory]: the sessionStore object
 * `auth` [optional, default as `return true`]: function that return the authorization to use the socket.io server based on the current `session`.
 
 Redis session store example:
 
 
-	var server = require('http').createServer()
-	  , connect = require('connect')
-	  , RedisStore = require("connect-redis")(connect)
-	  , redis = require("redis");
-
+	var server = require('http').createServer();
 	var dc = require('dataChannel.io').listen(server, {
 		session: {
 			cookie: {name: "datachannel.io", secret: "thisismysecretkey"},
-			store: new RedisStore({
-				host: "localhost",
-				port: 6379,
-				client: redis.createClient()
-			}),
 			auth: function(session) {
 				return true;
 			}
@@ -105,6 +90,7 @@ The parameters of the `new DataChannel(object)` are:
 
 ### ToDo
 
+- Redis Password
 - SSL
 
 Tested on Chrome v25 and Firefox v20.
