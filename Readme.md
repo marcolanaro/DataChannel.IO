@@ -17,9 +17,9 @@ If you want to implement sessions management or horizontal scaling you need a re
 
 	var options = {
 		nameSpace: [STRING],
-		redis: {port: [INTEGER], host: [STRING], options: {}},
+		redis: {port: [INTEGER], host: [STRING], options: { pass: [STRING] }},
 		session: {
-			cookie: [STRING],
+			cookie: {name: [STRING], secret: [STRING]},
 			auth: function(session) {
 				return true;
 			}
@@ -47,6 +47,7 @@ Redis session store example:
 
 	var server = require('http').createServer();
 	var dc = require('dataChannel.io').listen(server, {
+		redis: {port: 6380, host: localhost, options: {}},
 		session: {
 			cookie: {name: "datachannel.io", secret: "thisismysecretkey"},
 			auth: function(session) {
@@ -90,7 +91,7 @@ The parameters of the `new DataChannel(object)` are:
 
 ### ToDo
 
-- Redis Password
+- Serve unique client file javascript API
 - SSL
 
 Tested on Chrome v25 and Firefox v20.
@@ -99,3 +100,7 @@ Some examples at [https://github.com/marcolanaro/DataChannel.IO-Examples](https:
 
 
 More information at [http://www.datachannel.io](http://www.datachannel.io).
+
+## License
+
+MIT
