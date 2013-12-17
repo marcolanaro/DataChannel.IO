@@ -61,9 +61,9 @@ server.listen(8080);
 
 <pre><code>var options = {
     nameSpace: [STRING],
-    redis: {port: [INTEGER], host: [STRING], options: {}},
+    redis: {port: [INTEGER], host: [STRING], options: { pass: [STRING] }},
     session: {
-        cookie: [STRING],
+        cookie: {name: [STRING], secret: [STRING]},
         auth: function(session) {
             return true;
         }
@@ -99,6 +99,7 @@ server.listen(8080);
 
 <pre><code>var server = require('http').createServer();
 var dc = require('dataChannel.io').listen(server, {
+    redis: {port: 6380, host: localhost, options: {}},
     session: {
         cookie: {name: "datachannel.io", secret: "thisismysecretkey"},
         auth: function(session) {
@@ -173,13 +174,18 @@ server.listen(8080);
 <a name="todo" class="anchor" href="#todo"><span class="octicon octicon-link"></span></a>ToDo</h3>
 
 <ul>
-<li>Redis Password</li>
+<li>Serve unique client file javascript API</li>
 <li>SSL</li>
 </ul><p>Tested on Chrome v25 and Firefox v20.</p>
 
 <p>Some examples at <a href="https://github.com/marcolanaro/DataChannel.IO-Examples">https://github.com/marcolanaro/DataChannel.IO-Examples</a>.</p>
 
 <p>More information at <a href="http://www.datachannel.io">http://www.datachannel.io</a>.</p>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>MIT</p>
       </section>
     </div>
 
