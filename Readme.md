@@ -42,6 +42,9 @@ If you want to add session support you need a Redis server configured. Append th
 * `cookie` [mandatory]: object with `name` of the cookie and `secret` key
 * `auth` [optional, default as `return true`]: function that return the authorization to use the socket.io server based on the current `session`.
 
+Note: By default, redis-server binds to local only. Edit redis.conf to comment out this option or you will receive an ECONNECTREFUSED error. The line to comment out is:
+     bind 127.0.0.1
+
 Redis session store example:
 
 
