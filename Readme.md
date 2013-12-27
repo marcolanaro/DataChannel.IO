@@ -12,20 +12,18 @@ Socket.io has two purposes:
 	var dc = require('dataChannel.io').listen(server, options);
 
 	server.listen(8080);
-#### Complete Options
+#### Redis Store
 If you want to implement sessions management or horizontal scaling you need a redis server.
 
-	var options = {
-		nameSpace: [STRING],
+Note: By default, redis-server binds to local only. Edit redis.conf to comment out this option or you will receive an ECONNECTREFUSED error. The line to comment out is:
+     bind 127.0.0.1
+
+	var server = require('http').createServer();
+	var dc = require('dataChannel.io').listen(server, {
 		redis: {port: [INTEGER], host: [STRING], options: { pass: [STRING] }},
-		session: {
-			cookie: {name: [STRING], secret: [STRING]},
-			auth: function(session) {
-				return true;
-			}
-		},
-		static: [BOOLEAN]
-	}
+	});
+
+	server.listen(8080);
 
 #### Static File
 If you do not want to serve the static client file at `/datachannel.io/datachannel.io.js` you need to add the parameter `static: false`.
@@ -37,29 +35,25 @@ If you do not want to serve the static client file at `/datachannel.io/datachann
 
 	server.listen(8080);
 
-#### Session Support
-If you want to add session support you need a Redis server configured. Append the `session` object to the initialization with these parameters:
-* `cookie` [mandatory]: object with `name` of the cookie and `secret` key
-* `auth` [optional, default as `return true`]: function that return the authorization to use the socket.io server based on the current `session`.
+#### Add a Namespace
 
-Note: By default, redis-server binds to local only. Edit redis.conf to comment out this option or you will receive an ECONNECTREFUSED error. The line to comment out is:
-     bind 127.0.0.1
+You need to add at least one namespace:
 
-Redis session store example:
-
-
-	var server = require('http').createServer();
-	var dc = require('dataChannel.io').listen(server, {
-		redis: {port: 6380, host: localhost, options: {}},
+	dc.addNameSpace([STRING], {
 		session: {
-			cookie: {name: "datachannel.io", secret: "thisismysecretkey"},
+			cookie: {name: [STRING], secret: [STRING]},
 			auth: function(session) {
 				return true;
 			}
 		}
 	});
 
-	server.listen(8080);
+
+Session management is optional, if you want to use it you need a Redis server configured. The `session` object has this parameters:
+* `cookie` [mandatory]: object with `name` of the cookie and `secret` key
+* `auth` [optional, default as `return true`]: function that return the authorization to use the socket.io server based on the current `session`.
+
+
 ## On the Client
 #### index.html
 	<!DOCTYPE html>
