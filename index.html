@@ -55,21 +55,19 @@ server.listen(8080);
 </code></pre>
 
 <h4>
-<a name="complete-options" class="anchor" href="#complete-options"><span class="octicon octicon-link"></span></a>Complete Options</h4>
+<a name="redis-store" class="anchor" href="#redis-store"><span class="octicon octicon-link"></span></a>Redis Store</h4>
 
 <p>If you want to implement sessions management or horizontal scaling you need a redis server.</p>
 
-<pre><code>var options = {
-    nameSpace: [STRING],
+<p>Note: By default, redis-server binds to local only. Edit redis.conf to comment out this option or you will receive an ECONNECTREFUSED error. The line to comment out is:
+     bind 127.0.0.1</p>
+
+<pre><code>var server = require('http').createServer();
+var dc = require('dataChannel.io').listen(server, {
     redis: {port: [INTEGER], host: [STRING], options: { pass: [STRING] }},
-    session: {
-        cookie: {name: [STRING], secret: [STRING]},
-        auth: function(session) {
-            return true;
-        }
-    },
-    static: [BOOLEAN]
-}
+});
+
+server.listen(8080);
 </code></pre>
 
 <h4>
@@ -86,32 +84,28 @@ server.listen(8080);
 </code></pre>
 
 <h4>
-<a name="session-support" class="anchor" href="#session-support"><span class="octicon octicon-link"></span></a>Session Support</h4>
+<a name="add-a-namespace" class="anchor" href="#add-a-namespace"><span class="octicon octicon-link"></span></a>Add a Namespace</h4>
 
-<p>If you want to add session support you need a Redis server configured. Append the <code>session</code> object to the initialization with these parameters:</p>
+<p>You need to add at least one namespace:</p>
+
+<pre><code>dc.addNameSpace([STRING], {
+    session: {
+        cookie: {name: [STRING], secret: [STRING]},
+        auth: function(session) {
+            return true;
+        }
+    }
+});
+</code></pre>
+
+<p>Session management is optional, if you want to use it you need a Redis server configured. The <code>session</code> object has this parameters:</p>
 
 <ul>
 <li>
 <code>cookie</code> [mandatory]: object with <code>name</code> of the cookie and <code>secret</code> key</li>
 <li>
 <code>auth</code> [optional, default as <code>return true</code>]: function that return the authorization to use the socket.io server based on the current <code>session</code>.</li>
-</ul><p>Redis session store example:</p>
-
-<pre><code>var server = require('http').createServer();
-var dc = require('dataChannel.io').listen(server, {
-    redis: {port: 6380, host: localhost, options: {}},
-    session: {
-        cookie: {name: "datachannel.io", secret: "thisismysecretkey"},
-        auth: function(session) {
-            return true;
-        }
-    }
-});
-
-server.listen(8080);
-</code></pre>
-
-<h2>
+</ul><h2>
 <a name="on-the-client" class="anchor" href="#on-the-client"><span class="octicon octicon-link"></span></a>On the Client</h2>
 
 <h4>
