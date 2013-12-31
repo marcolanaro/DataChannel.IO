@@ -60,11 +60,10 @@ Session management is optional, if you want to use it you need a Redis server co
 	<html>
 		<head></head>
 		<body>
-			<script src="/socket.io/socket.io.js"></script>
-			<script src="/datachannel.io/datachannel.io.js"></script>
+			<script src="http://<yourHost>/datachannel.io/datachannel.io.js"></script>
 			<script>
 				var datachannel = new DataChannel({
-					socketServer: 'http://<yourIP>'
+					socketServer: 'http://<yourHost>'
 				});
 			</script>
 		</body>
@@ -88,7 +87,6 @@ The parameters of the `new DataChannel(object)` are:
 
 ### ToDo
 
-- Serve unique client file javascript API
 - SSL
 
 Tested on Chrome v25 and Firefox v20.
