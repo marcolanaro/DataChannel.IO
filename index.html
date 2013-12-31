@@ -115,11 +115,10 @@ server.listen(8080);
 &lt;html&gt;
     &lt;head&gt;&lt;/head&gt;
     &lt;body&gt;
-        &lt;script src="/socket.io/socket.io.js"&gt;&lt;/script&gt;
-        &lt;script src="/datachannel.io/datachannel.io.js"&gt;&lt;/script&gt;
+        &lt;script src="http://&lt;yourHost&gt;/datachannel.io/datachannel.io.js"&gt;&lt;/script&gt;
         &lt;script&gt;
             var datachannel = new DataChannel({
-                socketServer: 'http://&lt;yourIP&gt;'
+                socketServer: 'http://&lt;yourHost&gt;'
             });
         &lt;/script&gt;
     &lt;/body&gt;
@@ -168,7 +167,6 @@ server.listen(8080);
 <a name="todo" class="anchor" href="#todo"><span class="octicon octicon-link"></span></a>ToDo</h3>
 
 <ul>
-<li>Serve unique client file javascript API</li>
 <li>SSL</li>
 </ul><p>Tested on Chrome v25 and Firefox v20.</p>
 
