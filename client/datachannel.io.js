@@ -103,8 +103,11 @@ var DataChannel = (function(window){
 		} catch (e) {_noWebRTC(id)}
 	}
 
-	var socketInit = function(socketServer, nameSpace) {
-		socket = io.connect(socketServer + "/" + nameSpace);
+	var socketInit = function(socketServer, nameSpace, token) {
+		var url = socketServer + "/" + nameSpace;
+		if (token) url = url + "?token=" + token;
+		socket = io.connect(url);
+
 		socket.on('connected', function(data) {
 			User_Id = data.user_id;
 		});
@@ -181,9 +184,10 @@ var DataChannel = (function(window){
 					}
 				]
 			},
-			nameSpace: o.nameSpace || 'dataChannel'
+			nameSpace: o.nameSpace || 'dataChannel',
+			token: o.token || false
 		};
-		socketInit(options.socketServer, options.nameSpace);
+		socketInit(options.socketServer, options.nameSpace, options.token);
 	};
 
 	C.prototype = {
