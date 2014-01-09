@@ -195,6 +195,7 @@ var DataChannel = (function(window){
 			socket.emit('join', { room: room });
 		},
 		leave: function(room) {
+			rooms[room] = [];
 			socket.emit('leave', { room: room });
 		},
 		in: function(room) {
