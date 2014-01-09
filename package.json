@@ -1,6 +1,6 @@
 {
   "name": "datachannel.io",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "node.js realtime signaling server",
   "keywords": [
     "realtime",
