@@ -129,7 +129,7 @@ var DataChannel = (function(window){
 		});
 
 		socket.on('rely', function(data) {
-			_onMessage(JSON.parse(data));
+			_onMessage(data);
 		});
 
 		socket.on('userJoined', function(data) {
@@ -201,11 +201,11 @@ var DataChannel = (function(window){
 			if (!rooms[room]) rooms[room] = [];
 			return  {
 				emit:  function(event, data) {
-					var message = JSON.stringify({
+					var message = {
 						event: event,
 						room: room,
 						data: data
-					});
+					};
 					if (!channels) {
 						socket.emit('rely', { message: message , room: room});
 					} else {
@@ -213,7 +213,7 @@ var DataChannel = (function(window){
 						for (var i = 0, l = rooms[room].length; i < l; i += 1) {
 							var id = rooms[room][i];
 							try {
-								channels[id].dc.send(message);
+								channels[id].dc.send(JSON.stringify(message));
 							} catch (e) {
 								ids.push(id);
 							}
