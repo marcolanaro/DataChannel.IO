@@ -89,8 +89,9 @@ var DataChannel = (function(window){
 				Extend(event.channel, _channel);
 				channels[id].dc = event.channel;
 			};
-			channels[id].pc.setRemoteDescription(new RTCSessionDescription(data.description));
-			_create('answer', id);
+			channels[id].pc.setRemoteDescription(new RTCSessionDescription(data.description), function() {
+				_create('answer', id);
+			});
 		} catch (e) {_noWebRTC(id)}
 	}
 
