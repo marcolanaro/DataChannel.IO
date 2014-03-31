@@ -1,5 +1,5 @@
 ## Precise.io Server
-A Precise.io Server is a slightly adjusted DataChannel.io Server. All credits go to DataChannel.io for andling the WebRTC DataChannels and forwarding data, when ever the WebRTC connection fails.
+A Precise.io Server is a slightly adjusted DataChannel.io Server. All credits go to DataChannel.io for handling the WebRTC DataChannels and forwarding data, when ever the WebRTC connection fails.
 
 ## DataChannel.io
 
@@ -10,7 +10,7 @@ Socket.io has two purposes:
 * Serve signals between clients needed to coordinate the communication.
 * In case peer-to-peer communication fails or your browser does not support WebRTC, socket.io serve also the data message.
  
-### License
+#### License
 
 MIT
 
