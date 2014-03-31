@@ -9,7 +9,7 @@ var DataChannel = (function(window){
 	  , options
 	  , channels = []
 	  , onCallbacks = []
-	  , rooms = [];
+	  , rooms = []
 
 	var Extend = function(destination, source){
 		for(var property in source)
@@ -35,9 +35,11 @@ var DataChannel = (function(window){
 		},
 		onopen: function(event) {
 			var readyState = this.readyState;
+			
 		},
 		onclose: function(event) {
 			var readyState = this.readyState;
+			options.connectedCallback();
 		}
 	};
 
@@ -79,6 +81,7 @@ var DataChannel = (function(window){
 
 	function _noWebRTC(id) {
 		channels = false;
+		options.connectedCallback();		
 	}
 
 	function receiveOffer(data) {
@@ -186,12 +189,14 @@ var DataChannel = (function(window){
 				]
 			},
 			nameSpace: o.nameSpace || 'dataChannel',
-			token: o.token || false
+			token: o.token || false,
+			connectedCallback: o.connectedCallback || null
 		};
 		socketInit(options.socketServer, options.nameSpace, options.token);
 	};
 
 	C.prototype = {
+		
 		join: function(room) {
 			socket.emit('join', { room: room });
 		},
