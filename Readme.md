@@ -19,9 +19,9 @@ This installation guide is assumes you are using a Debian or Ubuntu Server. It i
 
 1. Fetch the code from this repository as zip or by cloning
 2. Copy it to a folder 'preciseio' on your server ( e.g. /home/you/preciseio )
-3. Install nodejs and npm.
+3. Install nodejs, npm and redis-server.
 
-	`$ apt-get install nodejs npm`
+	`$ apt-get install nodejs npm redis-server`
 
 4. cd into your folder
 
