@@ -37,8 +37,9 @@ This installation guide is assumes you are using a Debian or Ubuntu Server. It i
 
 7. go to your precise.io account and add a new configuration using your ip and the port 9000
 8. activate your just created configuration	
-9. back at your server, run the script
-
+9. back at your server, run the redis server, then the script
+	
+	`$ redis-server`<br />
 	`$ nodejs runDataChannel.js`
 	
 You should now be running on your local server!
