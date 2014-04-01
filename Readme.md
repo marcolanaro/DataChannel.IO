@@ -29,7 +29,7 @@ This installation guide is assumes you are using a Debian or Ubuntu Server. It i
 
 5. Install the required modules
 
-	`$ npm install cookie redis connect send connect-redis socket.io`
+	`$ npm install`
 
 6. find the ip address of your server using
 
