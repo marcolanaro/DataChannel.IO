@@ -35,11 +35,10 @@ var DataChannel = (function(window){
 		},
 		onopen: function(event) {
 			var readyState = this.readyState;
-			
+			options.connectedCallback();
 		},
 		onclose: function(event) {
 			var readyState = this.readyState;
-			options.connectedCallback();
 		}
 	};
 
