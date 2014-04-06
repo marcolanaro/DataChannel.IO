@@ -3,17 +3,18 @@ A Precise.io Server is a slightly adjusted DataChannel.io Server. All credits go
 
 ## DataChannel.io
 Cite from [DataChannel.io](https://github.com/marcolanaro/DataChannel.IO) : 
-<cite>
-Datachannel.io is inspired by the amazing socket.io framework and implements a real-time communication using the WebRTC technology.
-Peers are directly connected and datas are exchanged between clients without passing throug the server.
 
-Socket.io has two purposes:
-* Serve signals between clients needed to coordinate the communication.
-* In case peer-to-peer communication fails or your browser does not support WebRTC, socket.io serve also the data message.
-</cite>
-#### License
 
-MIT
+	Datachannel.io is inspired by the amazing socket.io framework and implements a real-time communication using the WebRTC technology.
+	Peers are directly connected and datas are exchanged between clients without passing throug the server.
+
+	Socket.io has two purposes:
+	* Serve signals between clients needed to coordinate the communication.
+	* In case peer-to-peer communication fails or your browser does not support WebRTC, socket.io serve also the data message.
+
+	#### License
+
+	MIT
 
 ## How To Set up your Precise.io Server
 This installation guide assumes you are using a Debian or Ubuntu Server. It is however not too difficult to adopt these steps on other systems, since node.js works on as good as any platform.
