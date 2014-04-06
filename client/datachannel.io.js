@@ -6,10 +6,12 @@ var DataChannel = (function(window){
 
 	var User_Id
 	  , socket
+	  , socketId
 	  , options
 	  , channels = []
 	  , onCallbacks = []
 	  , rooms = []
+	  ;
 
 	var Extend = function(destination, source){
 		for(var property in source)
@@ -27,7 +29,7 @@ var DataChannel = (function(window){
 		for (var i = 0, l = onCallbacks[message.room][message.event].length; i < l; i += 1) {
 			onCallbacks[message.room][message.event][i](message.data);
 		}
-	}
+	};
 
 	var _channel = {
 		onmessage: function(event) {
@@ -35,7 +37,7 @@ var DataChannel = (function(window){
 		},
 		onopen: function(event) {
 			var readyState = this.readyState;
-			options.connectedCallback();
+			options.connectedCallback.apply(options.connectedCallbackObject);	
 		},
 		onclose: function(event) {
 			var readyState = this.readyState;
@@ -80,7 +82,7 @@ var DataChannel = (function(window){
 
 	function _noWebRTC(id) {
 		channels = false;
-		options.connectedCallback();		
+		options.connectedCallback.apply(options.connectedCallbackObject);		
 	}
 
 	function receiveOffer(data) {
@@ -165,7 +167,14 @@ var DataChannel = (function(window){
 		socket.on('usersInRoom', function(data) {
 			rooms[data.room] = data.users;
 		});
-	}
+		
+		socket.on('yourSocketId', function(data) {
+			//socketId = data.user_id;
+			console.log("socket id data: " + JSON.stringify(data));
+			console.log(data.user_id);
+			socketId = data.user_id;
+		});
+	};
 
 	var C = function(o){
 		options = {
@@ -189,20 +198,27 @@ var DataChannel = (function(window){
 			},
 			nameSpace: o.nameSpace || 'dataChannel',
 			token: o.token || false,
-			connectedCallback: o.connectedCallback || null
+			connectedCallback: o.connectedCallback || null,
+			connectedCallbackObject: o.connectedCallbackObject || null,
 		};
 		socketInit(options.socketServer, options.nameSpace, options.token);
 	};
 
 	C.prototype = {
 		
+		getId: function() {
+			return socketId;
+		},
+		
 		join: function(room) {
 			socket.emit('join', { room: room });
 		},
+		
 		leave: function(room) {
 			rooms[room] = [];
 			socket.emit('leave', { room: room });
 		},
+		
 		in: function(room) {
 			if (!rooms[room]) rooms[room] = [];
 			return  {
@@ -228,6 +244,26 @@ var DataChannel = (function(window){
 							socket.emit('rely', { message: message, to: ids });
 					}
 				},
+				emit2:  function(id, event, data) {
+					var message = {
+						event: event,
+						room: room,
+						data: data
+					};
+					if (!channels) {
+						socket.emit('rely2', { message: message , to: id, room:room });
+						console.log("no channels");
+					} else {
+						
+						try {
+							channels[id].dc.send(JSON.stringify(message));
+						} catch (e) {
+							console.log("rely2 e: "+JSON.stringify(e));
+							socket.emit('rely2', { message: message , to: id, room:room });
+						}
+							
+					}
+				},
 				on: function(event, callback) {
 					if (!onCallbacks[room])
 						onCallbacks[room] = [];
@@ -235,7 +271,7 @@ var DataChannel = (function(window){
 						onCallbacks[room][event] = [];
 					onCallbacks[room][event].push(callback);
 				}
-			}
+			};
 		}
 	};
 
