@@ -101,7 +101,6 @@ var DataChannel = (function(window){
 				_create('answer', id);
 			});
 		} catch (e) {_noWebRTC(id)}
-		options.connectedCallback.apply(options.connectedCallbackObject);
 	}
 
 	function createConnection(id) {
@@ -130,7 +129,6 @@ var DataChannel = (function(window){
 			try {//console.log(data);
 				channels[data.user_id].pc.setRemoteDescription(new RTCSessionDescription(data.description));
 			} catch (e) {_noWebRTC(data.user_id)}
-			options.connectedCallback.apply(options.connectedCallbackObject);
 		});
 
 		socket.on('addIceCandidate', function(data) {
@@ -178,6 +176,7 @@ var DataChannel = (function(window){
 			//console.log("socket id data: " + JSON.stringify(data));
 			//console.log(data.user_id);
 			socketId = data.user_id;
+			options.connectedCallback.apply(options.connectedCallbackObject);
 		});
 	};
 
