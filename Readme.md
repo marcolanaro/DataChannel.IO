@@ -1,5 +1,5 @@
 ## Precise.io Server
-A Precise.io Server is an adjusted DataChannel.io Server. Credits go to DataChannel.io for setting up and handling the WebRTC DataChannels and forwarding data, when ever the WebRTC connection fails.
+A Precise.io Server is an adjusted DataChannel.io Server. All credits go to DataChannel.io for setting up and handling the WebRTC DataChannels and forwarding data, when ever the WebRTC connection fails.
 
 ### Changelog
 - Added function `emit2` for sending a message to a single client. This uses `rely2` for forwarding over the websocket
