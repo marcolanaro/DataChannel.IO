@@ -59,7 +59,7 @@ This installation guide assumes you are using a Debian or Ubuntu Server. It is h
 	
 You should now be running on your local server! If it fails, check your firewall. You can change the port for the DataChannel in the 'runDatachannel.js' script
 
-## How To Use Precise.io Server for other projects
+## How To Use Precise.io Server for other projects (On the clients)
 
 #### Creating a DataChannel Object
 	var datachannel = new DataChannel({
