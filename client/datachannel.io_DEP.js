@@ -4045,10 +4045,10 @@ var DataChannel = (function(window){
 		});
 		
 		socket.on('yourSocketId', function(data) {
-			//console.log("socket id data: " + JSON.stringify(data));
-			//console.log(data.user_id);
 			socketId = data.user_id;
-			options.connectedCallback.apply(options.connectedCallbackObject);
+			if(!(typeof(options.connectedCallback) == 'undefined')) {
+				options.connectedCallback.apply(options.connectedCallbackObject);
+			}
 		});
 	};
 
