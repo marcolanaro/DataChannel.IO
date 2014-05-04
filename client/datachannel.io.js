@@ -223,11 +223,8 @@ var DataChannel = (function(window){
 			socket.emit('leave', { room: room });
 		},
 		
-		expectBeacons: function() {
-			return !(!channels);
-		},
-		
 		in: function(room) {
+			
 			if (!rooms[room]) rooms[room] = [];
 			return  {
 				emit:  function(event, data) {
@@ -279,8 +276,7 @@ var DataChannel = (function(window){
 						room: room,
 						data: data
 					};
-					console.log("event: "+message.event);
-					if (!(!channels)) {
+					if (this.expectBeacons()) {
 						var ids = [];
 						for (var i = 0, l = rooms[room].length; i < l; i += 1) {
 							var id = rooms[room][i];
@@ -290,6 +286,18 @@ var DataChannel = (function(window){
 								// Nothing to do
 							}
 						}
+					}
+				},
+				expectBeacons: function() {
+					if(!channels) {
+						return false;
+					} else {
+						var size = 0;
+						for (var i = 0, l = rooms[room].length; i < l; i += 1) {
+							size++;
+						}
+						
+						return (size > 0);
 					}
 				},
 				on: function(event, callback) {
