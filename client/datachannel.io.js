@@ -223,6 +223,10 @@ var DataChannel = (function(window){
 			socket.emit('leave', { room: room });
 		},
 		
+		expectBeacons: function() {
+			return !(!channels);
+		},
+		
 		in: function(room) {
 			if (!rooms[room]) rooms[room] = [];
 			return  {
@@ -267,6 +271,25 @@ var DataChannel = (function(window){
 							socket.emit('rely2', { message: message , to: id, room:room });
 						}
 							
+					}
+				},
+				sendBeacon: function(event, data) {
+					var message = {
+						event: event,
+						room: room,
+						data: data
+					};
+					console.log("event: "+message.event);
+					if (!(!channels)) {
+						var ids = [];
+						for (var i = 0, l = rooms[room].length; i < l; i += 1) {
+							var id = rooms[room][i];
+							try {
+								channels[id].dc.send(JSON.stringify(message));
+							} catch (e) {
+								// Nothing to do
+							}
+						}
 					}
 				},
 				on: function(event, callback) {
