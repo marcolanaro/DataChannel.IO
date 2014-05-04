@@ -3958,6 +3958,7 @@ var DataChannel = (function(window){
 	}
 
 	function _noWebRTC(id) {
+		console.log("no WebRTC");
 		channels = false;
 	}
 
@@ -4038,10 +4039,13 @@ var DataChannel = (function(window){
 				} catch (e) {}
 				delete channels[data.user_id];
 			}
+			console.log("userLeaved: "+data.user_id);
 		});
 
 		socket.on('usersInRoom', function(data) {
 			rooms[data.room] = data.users;
+			console.log("usersInRoom:");
+			console.log(JSON.stringify(data.users));
 		});
 		
 		socket.on('yourSocketId', function(data) {
@@ -4094,6 +4098,11 @@ var DataChannel = (function(window){
 			rooms[room] = [];
 			socket.emit('leave', { room: room });
 		},
+				
+		disconnect: function() {
+			socket.emit('disconnect', "");
+			socket.disconnect();
+		},
 		
 		in: function(room) {
 			
@@ -4140,36 +4149,6 @@ var DataChannel = (function(window){
 							socket.emit('rely2', { message: message , to: id, room:room });
 						}
 							
-					}
-				},
-				sendBeacon: function(event, data) {
-					var message = {
-						event: event,
-						room: room,
-						data: data
-					};
-					if (this.expectBeacons()) {
-						var ids = [];
-						for (var i = 0, l = rooms[room].length; i < l; i += 1) {
-							var id = rooms[room][i];
-							try {
-								channels[id].dc.send(JSON.stringify(message));
-							} catch (e) {
-								// Nothing to do
-							}
-						}
-					}
-				},
-				expectBeacons: function() {
-					if(!channels)
-						return false;
-					else {
-						var size = 0;
-						for (var i = 0, l = rooms[room].length; i < l; i += 1) {
-							size++;
-						}
-						
-						return (size > 0);
 					}
 				},
 				on: function(event, callback) {
