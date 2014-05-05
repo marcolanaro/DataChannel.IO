@@ -4039,12 +4039,13 @@ var DataChannel = (function(window){
 				} catch (e) {}
 				delete channels[data.user_id];
 			}
-			console.log("userLeaved: "+data.user_id);
+			
+			var myEvent = new CustomEvent('userLeft', {'detail' : data.user_id} );
+			window.dispatchEvent(myEvent);
 		});
 
 		socket.on('usersInRoom', function(data) {
 			rooms[data.room] = data.users;
-			console.log("usersInRoom:");
 			console.log(JSON.stringify(data.users));
 		});
 		
@@ -4114,7 +4115,6 @@ var DataChannel = (function(window){
 						room: room,
 						data: data
 					};
-					console.log("event: "+message.event);
 					if (!channels) {
 						socket.emit('rely', { message: message , room: room});
 					} else {
