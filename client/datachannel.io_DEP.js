@@ -3870,6 +3870,13 @@ if (typeof define === "function" && define.amd) {
 }
 })();
 
+
+
+
+
+
+
+
 // Datachannel.io
 
 var RTCPeerConnection = window.mozRTCPeerConnection || window.webkitRTCPeerConnection || window.RTCPeerConnection;
@@ -3923,7 +3930,7 @@ var DataChannel = (function(window){
 
 	function _newChannel(id) {
 		try {
-			var pc = new RTCPeerConnection(options.rtcServers, {optional: [{DtlsSrtpKeyAgreement: true}, {RtpDataChannels: true}]});
+			var pc = new RTCPeerConnection(options.rtcServers, {"optional": []});
 			pc.onicecandidate = function(event) {
 				if (event.candidate) {
 					socket.emit('addIceCandidate', { candidate: event.candidate, user_id: id });
@@ -4058,25 +4065,10 @@ var DataChannel = (function(window){
 	};
 
 	var C = function(o){
+
 		options = {
 			socketServer: o.socketServer || null,
-			rtcServers: o.rtcServers || {
-				iceServers: [
-					{
-						"url": "stun:stun.l.google.com:19302"
-					},
-					{
-						"url": "turn:192.158.29.39:3478?transport=udp",
-						"credential": "JZEOEt2V3Qb0y27GRntt2u2PAYA=",
-						"username": "28224511:1379330808"
-					},
-					{
-						"url": "turn:192.158.29.39:3478?transport=tcp",
-						"credential": "JZEOEt2V3Qb0y27GRntt2u2PAYA=",
-						"username": "28224511:1379330808"
-					}
-				]
-			},
+			rtcServers: o.rtcServers || {"iceServers": [{"url": "stun:stun.services.mozilla.com"}]}, /* {"iceServers": [{ "url": "stun:stun.l.google.com:19302"	} ]} */
 			nameSpace: o.nameSpace || 'dataChannel',
 			token: o.token || false,
 			connectedCallback: o.connectedCallback || null,
@@ -4157,8 +4149,6 @@ var DataChannel = (function(window){
 					if (!onCallbacks[room][event])
 						onCallbacks[room][event] = [];
 					onCallbacks[room][event].push(callback);
-					//console.log("callbacks: "+ onCallbacks[room][event].toString());
-					//console.log("room: "+ room+ " callback: "+ callback.toString());
 				}
 			};
 		}
