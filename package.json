@@ -16,7 +16,8 @@
     "cookie": "0.1.0",
     "connect": "2.9.0",
     "send": "~0.1.0",
-    "connect-redis": "1.4.6"
+    "connect-redis": "1.4.6",
+    "redis": "0.7.3"
   },
   "contributors": [
     {

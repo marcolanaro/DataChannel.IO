@@ -1,3 +1,5 @@
+// Datachannel.io
+
 var RTCPeerConnection = window.mozRTCPeerConnection || window.webkitRTCPeerConnection || window.RTCPeerConnection;
 var RTCIceCandidate = window.mozRTCIceCandidate || window.RTCIceCandidate;
 var RTCSessionDescription = window.mozRTCSessionDescription || window.RTCSessionDescription;
@@ -6,10 +8,12 @@ var DataChannel = (function(window){
 
 	var User_Id
 	  , socket
+	  , socketId
 	  , options
 	  , channels = []
 	  , onCallbacks = []
-	  , rooms = [];
+	  , rooms = []
+	  ;
 
 	var Extend = function(destination, source){
 		for(var property in source)
@@ -24,10 +28,14 @@ var DataChannel = (function(window){
 	};
 
 	var _onMessage = function(message) {
-		for (var i = 0, l = onCallbacks[message.room][message.event].length; i < l; i += 1) {
-			onCallbacks[message.room][message.event][i](message.data);
+		
+		if(!(typeof(onCallbacks[message.room][message.event]) == 'undefined')) {
+		
+			for (var i = 0, l = onCallbacks[message.room][message.event].length; i < l; i += 1) {
+				onCallbacks[message.room][message.event][i](message.data);
+			}
 		}
-	}
+	};
 
 	var _channel = {
 		onmessage: function(event) {
@@ -43,7 +51,7 @@ var DataChannel = (function(window){
 
 	function _newChannel(id) {
 		try {
-			var pc = new RTCPeerConnection(options.rtcServers, {optional: [{DtlsSrtpKeyAgreement: true}, {RtpDataChannels: true}]});
+			var pc = new RTCPeerConnection(options.rtcServers, {"optional": []});
 			pc.onicecandidate = function(event) {
 				if (event.candidate) {
 					socket.emit('addIceCandidate', { candidate: event.candidate, user_id: id });
@@ -78,6 +86,7 @@ var DataChannel = (function(window){
 	}
 
 	function _noWebRTC(id) {
+		console.log("no WebRTC");
 		channels = false;
 	}
 
@@ -117,8 +126,8 @@ var DataChannel = (function(window){
 			receiveOffer(data);
 		});
 
-		socket.on('answer', function(data) {console.log(JSON.stringify(data));
-			try {console.log(data);
+		socket.on('answer', function(data) {//console.log(JSON.stringify(data));
+			try {//console.log(data);
 				channels[data.user_id].pc.setRemoteDescription(new RTCSessionDescription(data.description));
 			} catch (e) {_noWebRTC(data.user_id)}
 		});
@@ -130,7 +139,7 @@ var DataChannel = (function(window){
 		});
 
 		socket.on('rely', function(data) {
-			_onMessage(data);
+			_onMessage(data.message);
 		});
 
 		socket.on('userJoined', function(data) {
@@ -158,48 +167,59 @@ var DataChannel = (function(window){
 				} catch (e) {}
 				delete channels[data.user_id];
 			}
+			
+			var myEvent = new CustomEvent('userLeft', {'detail' : data.user_id} );
+			window.dispatchEvent(myEvent);
 		});
 
 		socket.on('usersInRoom', function(data) {
 			rooms[data.room] = data.users;
+			console.log(JSON.stringify(data.users));
 		});
-	}
+		
+		socket.on('yourSocketId', function(data) {
+			socketId = data.user_id;
+			if(!(typeof(options.connectedCallback) == 'undefined')) {
+				options.connectedCallback.apply(options.connectedCallbackObject);
+			}
+		});
+	};
 
 	var C = function(o){
+
 		options = {
 			socketServer: o.socketServer || null,
-			rtcServers: o.rtcServers || {
-				iceServers: [
-					{
-						"url": "stun:stun.l.google.com:19302"
-					},
-					{
-						"url": "turn:192.158.29.39:3478?transport=udp",
-						"credential": "JZEOEt2V3Qb0y27GRntt2u2PAYA=",
-						"username": "28224511:1379330808"
-					},
-					{
-						"url": "turn:192.158.29.39:3478?transport=tcp",
-						"credential": "JZEOEt2V3Qb0y27GRntt2u2PAYA=",
-						"username": "28224511:1379330808"
-					}
-				]
-			},
+			rtcServers: o.rtcServers || {"iceServers": [{"url": "stun:stun.services.mozilla.com"}]}, /* {"iceServers": [{ "url": "stun:stun.l.google.com:19302"	} ]} */
 			nameSpace: o.nameSpace || 'dataChannel',
-			token: o.token || false
+			token: o.token || false,
+			connectedCallback: o.connectedCallback || null,
+			connectedCallbackObject: o.connectedCallbackObject || null,
 		};
 		socketInit(options.socketServer, options.nameSpace, options.token);
 	};
 
 	C.prototype = {
+		
+		getId: function() {
+			return socketId;
+		},
+		
 		join: function(room) {
 			socket.emit('join', { room: room });
 		},
+		
 		leave: function(room) {
 			rooms[room] = [];
 			socket.emit('leave', { room: room });
 		},
+				
+		disconnect: function() {
+			socket.emit('disconnect', "");
+			socket.disconnect();
+		},
+		
 		in: function(room) {
+			
 			if (!rooms[room]) rooms[room] = [];
 			return  {
 				emit:  function(event, data) {
@@ -224,6 +244,26 @@ var DataChannel = (function(window){
 							socket.emit('rely', { message: message, to: ids });
 					}
 				},
+				emit2:  function(id, event, data) {
+					var message = {
+						event: event,
+						room: room,
+						data: data
+					};
+					if (!channels) {
+						socket.emit('rely2', { message: message , to: id, room:room });
+						//console.log("no channels");
+					} else {
+						
+						try {
+							channels[id].dc.send(JSON.stringify(message));
+						} catch (e) {
+							//console.log("rely2 e: "+JSON.stringify(e));
+							socket.emit('rely2', { message: message , to: id, room:room });
+						}
+							
+					}
+				},
 				on: function(event, callback) {
 					if (!onCallbacks[room])
 						onCallbacks[room] = [];
@@ -231,7 +271,7 @@ var DataChannel = (function(window){
 						onCallbacks[room][event] = [];
 					onCallbacks[room][event].push(callback);
 				}
-			}
+			};
 		}
 	};
 
